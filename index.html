@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>Char2Fourier V2.0</title>
-	
+    <meta charset="UTF-8">
+    <title>Char2Fourier</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.js"></script>
+
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.7/p5.js"></script>
-	<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
 
-	<script src="javascripts/spline.js"></script>
-	<script src="javascripts/fourier.js"></script>
-	<script src="javascripts/eventlistener.js"></script>
-	<script src="index.js"></script>
-	<link rel="stylesheet" type="text/css" href="index.css">
+    <script src="javascripts/Spline.js"></script>
+    <script src="javascripts/Fourier.js"></script>
+    <script src="javascripts/main.js"></script>
+    <script src="javascripts/FourierViewer.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
+
 <body>
-	<div id="frame_container">
-		<div id="frame_input">
-			<div id="canvas_input"></div>
-			<button id="sendButton">Send!</button>
-			<button id="deleteButton">Delete!</button>
-		</div>
-		<div id="frame_output">
-			<div id="canvas_output"></div>
-		</div>
-	</div>
+    <p id="titleBar">
+        <label id="title">Char2Fourier</label>
+    </p>
+    <div id="output_x"></div>
+    <div id="output_y"></div>
+    <div id="formula">
+        <p id="formula_x" style="color:red"></p>
+        <p id="formula_y" style="color:blue"></p>
+    </div>
 </body>
+
 </html>
