@@ -1,12 +1,12 @@
-var spline;
-var W = 600;
+var W = 400;
 var k_MAX = 50;
 
 var app_input = function(p){
+    var spline;
     var fourier;
 
-    this.p_list = [];
-    this.p_list2 = [];
+    p_list = [];
+    p_list2 = [];
 
     p.setup = function(){
         p.createCanvas(W, W);
@@ -47,7 +47,7 @@ var app_input = function(p){
         
         p.strokeWeight(2.5);
         for( var pi = 0 ; pi < p_list2.length/2 ; pi ++ ){
-            var p2 = this.p_list2[pi];
+            var p2 = p_list2[pi];
             p.point( p2.x, p2.y );
         }
         
