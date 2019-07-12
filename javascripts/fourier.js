@@ -1,14 +1,10 @@
-function Fourier( _len_points ){
+function Fourier(){
     this.m_aX = [];
     this.m_bX = [];
     this.m_aY = [];
     this.m_bY = [];
-    this.len_points = _len_points;
 }
 
-/**
- * convert array of points to Fourier series
- */
 Fourier.prototype.expandFourierSeries = function( _arrayPt, _iMaxDegree ){
     var _iNumOfUnit = _arrayPt.length;
 
@@ -37,30 +33,26 @@ Fourier.prototype.expandFourierSeries = function( _arrayPt, _iMaxDegree ){
         this.m_aY[k] *= 2/_iNumOfUnit;
         this.m_bY[k] *= 2/_iNumOfUnit;
     }
-
 }
 
-/**
- * restore array of points from Frouier series
- */
-Fourier.prototype.restorePoints = function(){
-    var _listPt = [];
-    var k_MAX = this.m_aX.length-1;
-    
-    for( var pi = 0 ; pi < this.len_points ; pi ++ ){
+Fourier.prototype.restorePoints = function(_applet){
+    retPointList = [];
+
+    for( var pi = 0 ; pi < _applet.p_list.length ; pi ++ ){
         var p_restored = new Point(0, 0);
-        var t = 2 * Math.PI * pi/this.len_points - Math.PI;
+        var t = 2 * Math.PI * pi/_applet.p_list.length - Math.PI;
 
         p_restored.x += this.m_aX[0]/2;
         p_restored.y += this.m_aY[0]/2;
-        for(let k = 1 ; k <= k_MAX ; k ++ ){
-            p_restored.x += this.m_aX[k] * Math.cos(k*t);
-            p_restored.x += this.m_bX[k] * Math.sin(k*t);
-            p_restored.y += this.m_aY[k] * Math.cos(k*t);
-            p_restored.y += this.m_bY[k] * Math.sin(k*t);
+        for( var k = 1 ; k <= k_MAX ; k ++ ){
+            p_restored.x += this.m_aX[k] * cos(k*t);
+            p_restored.x += this.m_bX[k] * sin(k*t);
+            p_restored.y += this.m_aY[k] * cos(k*t);
+            p_restored.y += this.m_bY[k] * sin(k*t);
         }
-        _listPt.push(p_restored);
+        retPointList.push(p_restored);
     }
-    
-    return _listPt;
+
+    return retPointList;
 }
+
