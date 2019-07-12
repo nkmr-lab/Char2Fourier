@@ -4,7 +4,7 @@ function FourierViewer(){
     this.p_list2 = [];
 }
 
-FourierViewer.prototype = new Fourier();
+// FourierViewer.prototype = new Fourier();
 
 FourierViewer.prototype.restorePoints = function(){
     this.p_list2 = [];
