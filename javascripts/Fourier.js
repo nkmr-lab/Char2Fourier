@@ -35,12 +35,12 @@ Fourier.prototype.expandFourierSeries = function( _arrayPt, _iMaxDegree ){
     }
 }
 
-Fourier.prototype.restorePoints = function(_applet){
+Fourier.prototype.restorePoints = function(){
     retPointList = [];
 
-    for( var pi = 0 ; pi < _applet.p_list.length ; pi ++ ){
+    for( var pi = 0 ; pi < p_list.length ; pi ++ ){
         var p_restored = new Point(0, 0);
-        var t = 2 * Math.PI * pi/_applet.p_list.length - Math.PI;
+        var t = 2 * Math.PI * pi/p_list.length - Math.PI;
 
         p_restored.x += this.m_aX[0]/2;
         p_restored.y += this.m_aY[0]/2;

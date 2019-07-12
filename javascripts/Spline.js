@@ -2,12 +2,13 @@ function Spline(){
     this.g_fThresholdToRemove = 2;
 }
 
-Spline.prototype.getSpline = function( _applet, _arrayPt, _multiple ) {
+Spline.prototype.getSpline = function( _arrayPt, _multiple ) {
+
     var _arrayT = new Array(_arrayPt.length);
     for ( var i=0; i<_arrayPt.length; i++ ) {
         _arrayT[i] = i*2*Math.PI/(_arrayPt.length-1)-Math.PI;
     }
-    var _points = this.getSplineSeries( _applet, _arrayT, _arrayPt, _multiple );
+    var _points = this.getSplineSeries( _arrayT, _arrayPt, _multiple );
     var _retPoints = new Array( _points.length*2-1 );
     for( var i = 0 ; i < _points.length ; i ++ ){
         _retPoints[i] = _points[i];
@@ -37,7 +38,7 @@ Spline.prototype.GetInterXYSeries = function( _t, _arrayPt, _multiple ){
 }
 
 
-Spline.prototype.getSplineSeries = function( _applet, _t, _arrayPt, _multiple ){
+Spline.prototype.getSplineSeries = function( _t, _arrayPt, _multiple ){
     if ( _arrayPt.length == 2 ) {
         return this.GetInterXYSeries( _t, _arrayPt, _multiple );
     }
@@ -56,7 +57,7 @@ Spline.prototype.getSplineSeries = function( _applet, _t, _arrayPt, _multiple ){
     var number = 1;
     var skipFrom = 1;
     for ( var i=1; i < _interX.length; i++ ) {
-        if ( _applet.dist( _interX[i], _interY[i], _interX[skipFrom], _interY[skipFrom]) < this.g_fThresholdToRemove ) {
+        if ( dist( _interX[i], _interY[i], _interX[skipFrom], _interY[skipFrom]) < this.g_fThresholdToRemove ) {
         } else if ( _interX[i] == -1 && _interY[i] == -1 ) {
         } else {
             skipFrom = i;
@@ -70,7 +71,7 @@ Spline.prototype.getSplineSeries = function( _applet, _t, _arrayPt, _multiple ){
     number = 1;
     skipFrom = 1;
     for ( var i=1; i<_interX.length; i++ ) {
-        if ( _applet.dist( _interX[i], _interY[i], _interX[skipFrom], _interY[skipFrom]) < this.g_fThresholdToRemove) {
+        if ( dist( _interX[i], _interY[i], _interX[skipFrom], _interY[skipFrom]) < this.g_fThresholdToRemove) {
         } else if ( _interX[i] == -1 && _interY[i] == -1 ) {
         } else {
             skipFrom = i;
