@@ -11,7 +11,7 @@ var app_input = function(p){
     p.setup = function(){
         p.createCanvas(W, W);
         p.noFill();
-        p.textSize(40);
+        p.textSize(20);
         p.textAlign(p.CENTER, p.CENTER);
 
         spline = new Spline();
