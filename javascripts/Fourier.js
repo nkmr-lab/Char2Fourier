@@ -55,4 +55,3 @@ Fourier.prototype.restorePoints = function(_applet){
 
     return retPointList;
 }
-
