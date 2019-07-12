@@ -173,8 +173,8 @@ var app_input = function(p){
         formula_x = formula_x.slice(2);
         formula_y = formula_y.slice(2);
 
-        $("#formula_x").text(formula_x);
-        $("#formula_y").text(formula_y);
+        $("#formulaX1").text(formula_x);
+        $("#formulaY1").text(formula_y);
 
         p_list2 = fourier.restorePoints(this);
     }
