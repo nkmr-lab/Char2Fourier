@@ -79,39 +79,46 @@ function draw(){
         var p = p_listSpline2[pi];
         point( p.x, p.y );
     }
+    push();
+    translate(W * 3/2, 0);
     for( var pi = 0 ; pi < p_listSpline3.length; pi ++ ){
         var p = p_listSpline3[pi];
         point( p.x, p.y );
     }
+    pop();
 
     if( p_listSpline.length > 0 ){
-        drawFourierViewer(p_listSpline, fourier1, 0);
+        drawFourierViewer(p_listSpline, fourier1, W*3/4, W*3/4, false);
     }
     if( p_listSpline2.length > 0 ){
-        drawFourierViewer(p_listSpline2, fourier2, W);
+        drawFourierViewer(p_listSpline2, fourier2, W*3/4, W*7/4, false);
+    }
+    if( p_listSpline3.length > 0 ){
+        push();
+        // translate(W*3/2, 0);
+        drawFourierViewer(p_listSpline3, fourier3, W*3/4, W*11/4, true);
+        pop();
     }
 }
 
-function drawFourierViewer(_list, _fourier, _offsetX){
+function drawFourierViewer(_list, _fourier, _offsetX, _offsetY, isWeighted){
     stroke(0);
     strokeWeight(1);
-    var t = 2 * Math.PI * (frameCount % _list.length)/_list.length - Math.PI;
+    var t = 2 * Math.PI * (frameCount % _list.length) / _list.length - Math.PI;
     noFill();
 
     push();
-    translate(0, 0);
-    push();
-    translate(_fourier.m_aX[0]/2, height * 3/4 );
-    nextCircleX( _fourier, 1, k_MAX, t);
+        var marginW = 0;
+        if( isWeighted ) marginW = W * 3/2;
+        translate(_fourier.m_aX[0]/2 + marginW, _offsetX);
+        // console.log("_offsetX = " + _offsetX);
+        // console.log("_fourier.m_aX[0]/2 = " + _fourier.m_aX[0]/2);
+        // console.log("total X =  " + (_offsetX + _fourier.m_aX[0]/2) );
+        nextCircleX(_fourier, 1, k_MAX, t);
     pop();
-    pop();
-
     push();
-    translate(_offsetX, 0);
-    push();
-    translate(width/4, _fourier.m_aY[0]/2);
-    nextCircleY( _fourier, 1, k_MAX, t);
-    pop();
+        translate(_offsetY, _fourier.m_aY[0]/2);
+        nextCircleY(_fourier, 1, k_MAX, t);
     pop();
 }
 
