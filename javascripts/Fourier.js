@@ -1,8 +1,9 @@
-function Fourier(){
+function Fourier(_lengthOfPoints){
     this.m_aX = [];
     this.m_bX = [];
     this.m_aY = [];
     this.m_bY = [];
+    this.lengthOfPoints = _lengthOfPoints;
 }
 
 Fourier.prototype.expandFourierSeries = function( _arrayPt, _iMaxDegree ){
@@ -13,7 +14,7 @@ Fourier.prototype.expandFourierSeries = function( _arrayPt, _iMaxDegree ){
     this.m_aY = new Array(_iMaxDegree+1);
     this.m_bY = new Array(_iMaxDegree+1);
 
-    for ( var k=0; k<= Math.min(_iMaxDegree, _iNumOfUnit/2); k++) {
+    for ( var k = 0; k <= Math.min(_iMaxDegree, _iNumOfUnit/2); k ++) {
         this.m_aX[k] = 0.0;
         this.m_bX[k] = 0.0;
         this.m_aY[k] = 0.0;
@@ -38,9 +39,9 @@ Fourier.prototype.expandFourierSeries = function( _arrayPt, _iMaxDegree ){
 Fourier.prototype.restorePoints = function(){
     retPointList = [];
 
-    for( var pi = 0 ; pi < p_list.length ; pi ++ ){
+    for( var pi = 0 ; pi < this.lengthOfPoints; pi ++ ){
         var p_restored = new Point(0, 0);
-        var t = 2 * Math.PI * pi/p_list.length - Math.PI;
+        var t = 2 * Math.PI * pi/this.lengthOfPoints - Math.PI;
 
         p_restored.x += this.m_aX[0]/2;
         p_restored.y += this.m_aY[0]/2;

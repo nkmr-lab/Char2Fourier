@@ -4,9 +4,11 @@ var k_MAX = 50;
 var spline;
 var fourier1, fourier2, fourier3;
 
+// p_listSplineX is a list of points
+// made using Spline interpolation OR MADE FROM FOURIER SERIES
 p_list  = [], p_listSpline  = [];
 p_list2 = [], p_listSpline2 = [];
-p_list3 = [], p_listSpline3 = [];
+p_listSpline3 = [];
 
 function setup(){
     createCanvas(W*3, W);
@@ -15,9 +17,9 @@ function setup(){
     textAlign(CENTER, CENTER);
 
     spline = new Spline();
-    fourier1 = new Fourier();
-    fourier2 = new Fourier();
-    fourier3 = new Fourier();
+    fourier1 = new Fourier(0);
+    fourier2 = new Fourier(0);
+    fourier3 = new Fourier(0);
 
     pg = createGraphics(W, W);
 }
@@ -43,8 +45,11 @@ function draw(){
     line(W/2, 0, W/2, W/2);
     line(0, W/2, W/2, W/2);
 
-    pg.background(228);
-    // image(pg, W, 0);
+    noStroke();
+    fill(228);
+    rect(W, 0, W, W);
+    fill(204);
+    rect(W*2, 0, W, W);
 
     // if( mouseIsPressed ){
     //     for( var pi = 0; pi < p_list.length; pi ++ ){
@@ -53,6 +58,7 @@ function draw(){
     // }
     
     // draw strokes
+    stroke(0);
     strokeWeight(1);
     for( var pi = 0 ; pi < p_list.length ; pi ++ ){
         var p = p_list[pi];
@@ -63,13 +69,18 @@ function draw(){
         point( p.x, p.y );
     }
 
+    // draw strokes with Spline interpolation
     strokeWeight(2.5);
-    for( var pi = 0 ; pi < p_listSpline.length ; pi ++ ){
+    for( var pi = 0 ; pi < p_listSpline.length; pi ++ ){
         var p = p_listSpline[pi];
         point( p.x, p.y );
     }    
-    for( var pi = 0 ; pi < p_listSpline2.length ; pi ++ ){
+    for( var pi = 0 ; pi < p_listSpline2.length; pi ++ ){
         var p = p_listSpline2[pi];
+        point( p.x, p.y );
+    }
+    for( var pi = 0 ; pi < p_listSpline3.length; pi ++ ){
+        var p = p_listSpline3[pi];
         point( p.x, p.y );
     }
 
@@ -191,8 +202,6 @@ function mouseReleased(){
         p_list = [];
 
         fourier1.expandFourierSeries( p_listSpline, k_MAX );
-        console.log( fourier1 );
-        console.log( fourier1.m_aX);
 
     }else if((mouseX >= W && mouseX < W*3/2 && mouseY >= 0 && mouseY < W/2)){
 
@@ -201,11 +210,32 @@ function mouseReleased(){
         p_list2 = [];
 
         fourier2.expandFourierSeries( p_listSpline2, k_MAX );
-        console.log( fourier2 );
-
     }
 
+    if(p_listSpline.length > 0 && p_listSpline2.length > 0){
+        var ratio = 0.5;
+        console.log("length of p_listSpline: " + p_listSpline.length);
+        console.log("length of p_listSpline2: " + p_listSpline2.length);
+        // console.log(1-ratio);
+        // console.log(p_listSpline.length * (1-ratio));
 
+        var lengthOfPointsW = parseInt(p_listSpline.length * (1-ratio) + p_listSpline2.length * ratio);
+        fourier3 = new Fourier(lengthOfPointsW);
+        console.log("fourier3.lengthOfPoints = " + fourier3.lengthOfPoints);
+
+        for(let k = 0; k < fourier1.m_aX.length; k ++){
+            let w_aX = fourier1.m_aX[k] * (1-ratio) + fourier2.m_aX[k] * ratio;
+            let w_aY = fourier1.m_aY[k] * (1-ratio) + fourier2.m_aY[k] * ratio;
+            let w_bX = fourier1.m_bX[k] * (1-ratio) + fourier2.m_bX[k] * ratio;
+            let w_bY = fourier1.m_bY[k] * (1-ratio) + fourier2.m_bY[k] * ratio;
+            fourier3.m_aX[k] = w_aX;
+            fourier3.m_aY[k] = w_aY;
+            fourier3.m_bX[k] = w_bX;
+            fourier3.m_bY[k] = w_bY;
+        }
+
+        p_listSpline3 = fourier3.restorePoints();
+    }
 
     // var formula_x = "";
     // var formula_y = "";
