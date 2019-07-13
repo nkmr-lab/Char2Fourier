@@ -63,7 +63,6 @@ function draw(){
         point( p.x, p.y );
     }
 
-    // draw splined strokes
     strokeWeight(2.5);
     for( var pi = 0 ; pi < p_listSpline.length ; pi ++ ){
         var p = p_listSpline[pi];
@@ -72,79 +71,92 @@ function draw(){
     for( var pi = 0 ; pi < p_listSpline2.length ; pi ++ ){
         var p = p_listSpline2[pi];
         point( p.x, p.y );
-    }    
+    }
 
-    // stroke(0);
-    // strokeWeight(1);
-    // if( p_list2.length > 0 ){
-    //     var t = 2 * Math.PI * (frameCount % p_list2.length)/p_list2.length - Math.PI;
-
-    //     noFill();
-    //     push();
-    //     translate(fourier.m_aX[0]/2, height * 3/4 );
-    //     nextCircleX( 1, k_MAX, t);
-    //     pop();
-    //     push();
-    //     translate(width * 3/4, fourier.m_aY[0]/2);
-    //     nextCircleY( 1, k_MAX, t);
-    //     pop();
-    // }   
-
+    if( p_listSpline.length > 0 ){
+        drawFourierViewer(p_listSpline, fourier1, 0);
+    }
+    if( p_listSpline2.length > 0 ){
+        drawFourierViewer(p_listSpline2, fourier2, W);
+    }
 }
 
-// nextCircleX = function( _k /* 迴ｾ蝨ｨ縺ｮ谺｡謨ｰ */, _k_MAX /* 譛螟ｧ谺｡謨ｰ */, _t /* 蟐剃ｻ句､画焚 */ ){
-//     var r_aX = fourier.m_aX[_k];
-//     var r_bX = fourier.m_bX[_k];
+function drawFourierViewer(_list, _fourier, _offsetX){
+    stroke(0);
+    strokeWeight(1);
+    var t = 2 * Math.PI * (frameCount % _list.length)/_list.length - Math.PI;
+    noFill();
 
-//     strokeWeight(1);
-//     stroke(0);
-//     ellipse( 0, 0, Math.abs(r_aX) * 2, Math.abs(r_aX) * 2 );
-//     stroke(255, 128, 128);
-//     line(0, 0, r_aX * cos(_k*_t), r_aX * sin(_k*_t));            // X譁ｹ蜷代�邱�: a(k) * cos(kt)
-//     push();
-//         translate( r_aX * cos(_k*_t), r_aX * sin(_k*_t) );       // X譁ｹ蜷醍ｧｻ蜍�: a(k) * cos(kt)
-//         ellipse( 0, 0, Math.abs(r_bX) * 2, Math.abs(r_bX) * 2 );
-//         line(0, 0, r_bX * sin(_k*_t), r_bX * cos(_k*_t));        // X譁ｹ蜷代�邱�: b(k) * sin(kt)
-//         push();
-//             translate( r_bX * sin(_k*_t), r_bX * cos(_k*_t) );   // X譁ｹ蜷醍ｧｻ蜍�: b(k) * sin(kt)
-//             if( _k <= _k_MAX ){
-//                 nextCircleX( _k+1, _k_MAX, _t );
-//             }else{
-//                 line( 0, -W, 0, W );
-//                 strokeWeight(7);
-//                 stroke(255, 0, 0);
-//                 point(0, 0);
-//             }
-//         pop();
-//     pop();
-// }
+    push();
+    translate(0, 0);
+    push();
+    translate(_fourier.m_aX[0]/2, height * 3/4 );
+    nextCircleX( _fourier, 1, k_MAX, t);
+    pop();
+    pop();
 
-// nextCircleY = function( _k /* 迴ｾ蝨ｨ縺ｮ谺｡謨ｰ */, _k_MAX /* 譛螟ｧ谺｡謨ｰ */, _t /* 蟐剃ｻ句､画焚 */ ){
-//     var r_aY = fourier.m_aY[_k];
-//     var r_bY = fourier.m_bY[_k];
+    push();
+    translate(_offsetX, 0);
+    push();
+    translate(width/4, _fourier.m_aY[0]/2);
+    nextCircleY( _fourier, 1, k_MAX, t);
+    pop();
+    pop();
+}
 
-//     strokeWeight(1);
-//     stroke(0);
-//     ellipse( 0, 0, Math.abs(r_aY) * 2, Math.abs(r_aY) * 2 );
-//     stroke(128, 128, 255);
-//     line(0, 0, r_aY * sin(_k*_t), r_aY * cos(_k*_t));           // Y譁ｹ蜷代�邱�: a(k) * cos(kt)
-//     push();
-//         translate( r_aY * sin(_k*_t), r_aY * cos(_k*_t) );       // Y譁ｹ蜷醍ｧｻ蜍�: a(k) * cos(kt)
-//         ellipse( 0, 0, Math.abs(r_bY) * 2, Math.abs(r_bY) * 2 );
-//         line(0, 0, r_bY * cos(_k*_t), r_bY * sin(_k*_t));        // Y譁ｹ蜷代�邱�: b(k) * sin(kt)
-//         push();
-//             translate( r_bY * cos(_k*_t), r_bY * sin(_k*_t) );   // Y譁ｹ蜷醍ｧｻ蜍�: b(k) * sin(kt)
-//             if( _k <= _k_MAX ){
-//                 this.nextCircleY( _k+1, _k_MAX, _t );
-//             }else{
-//                 line(-W, 0, W, 0);
-//                 strokeWeight(7);
-//                 stroke(0, 0, 255);
-//                 point(0, 0);
-//             }
-//         pop();
-//     pop();
-// }
+function nextCircleX( _fourier, _k , _k_MAX, _t){
+    var r_aX = _fourier.m_aX[_k];
+    var r_bX = _fourier.m_bX[_k];
+
+    strokeWeight(1);
+    stroke(0);
+    ellipse( 0, 0, Math.abs(r_aX) * 2, Math.abs(r_aX) * 2 );
+    stroke(255, 128, 128);
+    line(0, 0, r_aX * cos(_k*_t), r_aX * sin(_k*_t));            // 前の円の中心〜この円の中心を結ぶ線: a(k) * cos(kt)
+    push();
+        translate( r_aX * cos(_k*_t), r_aX * sin(_k*_t) );       // この円の中心に移動: a(k) * cos(kt)
+        ellipse( 0, 0, Math.abs(r_bX) * 2, Math.abs(r_bX) * 2 );
+        line(0, 0, r_bX * sin(_k*_t), r_bX * cos(_k*_t));        // 前の円の中心〜この円の中心: b(k) * sin(kt)
+        push();
+            translate( r_bX * sin(_k*_t), r_bX * cos(_k*_t) );   // この円の中心に移動: b(k) * sin(kt)
+            if( _k <= _k_MAX ){
+                nextCircleX( _fourier, _k+1, _k_MAX, _t );
+            }else{
+                line( 0, -W, 0, W );
+                strokeWeight(7);
+                stroke(255, 0, 0);
+                point(0, 0);
+            }
+        pop();
+    pop();
+}
+
+function nextCircleY(_fourier, _k, _k_MAX, _t){
+    var r_aY = _fourier.m_aY[_k];
+    var r_bY = _fourier.m_bY[_k];
+
+    strokeWeight(1);
+    stroke(0);
+    ellipse( 0, 0, Math.abs(r_aY) * 2, Math.abs(r_aY) * 2 );
+    stroke(128, 128, 255);
+    line(0, 0, r_aY * sin(_k*_t), r_aY * cos(_k*_t));           // 前の円の中心〜この円の中心を結ぶ線: a(k) * cos(kt)
+    push();
+        translate( r_aY * sin(_k*_t), r_aY * cos(_k*_t) );       // この円の中心に移動: a(k) * cos(kt)
+        ellipse( 0, 0, Math.abs(r_bY) * 2, Math.abs(r_bY) * 2 );
+        line(0, 0, r_bY * cos(_k*_t), r_bY * sin(_k*_t));        // 前の円の中心〜この円の中心を結ぶ線: b(k) * sin(kt)
+        push();
+            translate( r_bY * cos(_k*_t), r_bY * sin(_k*_t) );   // この円の中心に移動: b(k) * sin(kt)
+            if( _k <= _k_MAX ){
+                this.nextCircleY( _fourier, _k+1, _k_MAX, _t );
+            }else{
+                line(-W, 0, W, 0);
+                strokeWeight(7);
+                stroke(0, 0, 255);
+                point(0, 0);
+            }
+        pop();
+    pop();
+}
 
 function mousePressed(){
     if((mouseX >= 0 && mouseX < W/2 && mouseY >= 0 && mouseY < W/2) ){
@@ -178,22 +190,22 @@ function mouseReleased(){
         p_listSpline = spline.getSpline( p_list, 100 );
         p_list = [];
 
+        fourier1.expandFourierSeries( p_listSpline, k_MAX );
+        console.log( fourier1 );
+        console.log( fourier1.m_aX);
+
     }else if((mouseX >= W && mouseX < W*3/2 && mouseY >= 0 && mouseY < W/2)){
 
         p_list2.push( new Point(mouseX, mouseY) );
         p_listSpline2 = spline.getSpline( p_list2, 100 );
         p_list2 = [];
 
+        fourier2.expandFourierSeries( p_listSpline2, k_MAX );
+        console.log( fourier2 );
+
     }
 
-    // console.log("ストロークの入力が行われました");
-    // console.log(p_list);
 
-    // p_list2 = spline.getSpline( this, p_list, 100 );
-    // fourier.expandFourierSeries( p_list2, k_MAX );
-
-    // console.log("スプライン補間を行いました");
-    // console.log(p_list2);
 
     // var formula_x = "";
     // var formula_y = "";
@@ -216,7 +228,7 @@ function mouseReleased(){
     // $("#formulaX1").text(formula_x);
     // $("#formulaY1").text(formula_y);
 
-    // p_list2 = fourier.restorePoints(this);
+    // p_listSpline = fourier.restorePoints(this);
 }
 
 /**
