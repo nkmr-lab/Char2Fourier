@@ -25,25 +25,13 @@ function setup(){
 }
 
 function draw(){
-    background(255, 255, 255);
+    background(255);
 
-    if( p_list.length == 0 && p_list2.length == 0 ){
-        fill(153);
-        noStroke();
-        text("Draw here!!", width/4, height/4);
-    }
-
-    noStroke();
-    fill(205, 222, 255);
-    rect(W/2, W/2, W/2, W/2);
-    fill(255, 204, 255);
-    rect(0, W/2, W/2, W/2);
-    fill(204, 255, 255);
-    rect(W/2, 0, W/2, W/2);
-    stroke(0);
-    strokeWeight(1);
-    line(W/2, 0, W/2, W/2);
-    line(0, W/2, W/2, W/2);
+    // if( p_listSpline.length == 0){
+    //     fill(153);
+    //     noStroke();
+    //     text("Draw here!!", W/4, W/4);
+    // }
 
     noStroke();
     fill(228);
@@ -94,14 +82,11 @@ function draw(){
         drawFourierViewer(p_listSpline2, fourier2, W*3/4, W*7/4, false);
     }
     if( p_listSpline3.length > 0 ){
-        push();
-        // translate(W*3/2, 0);
         drawFourierViewer(p_listSpline3, fourier3, W*3/4, W*11/4, true);
-        pop();
     }
 }
 
-function drawFourierViewer(_list, _fourier, _offsetX, _offsetY, isWeighted){
+function drawFourierViewer(_list, _fourier, _offsetY_circleX, _offsetX_circleY, isWeighted){
     stroke(0);
     strokeWeight(1);
     var t = 2 * Math.PI * (frameCount % _list.length) / _list.length - Math.PI;
@@ -110,21 +95,31 @@ function drawFourierViewer(_list, _fourier, _offsetX, _offsetY, isWeighted){
     push();
         var marginW = 0;
         if( isWeighted ) marginW = W * 3/2;
-        translate(_fourier.m_aX[0]/2 + marginW, _offsetX);
-        // console.log("_offsetX = " + _offsetX);
-        // console.log("_fourier.m_aX[0]/2 = " + _fourier.m_aX[0]/2);
-        // console.log("total X =  " + (_offsetX + _fourier.m_aX[0]/2) );
-        nextCircleX(_fourier, 1, k_MAX, t);
+
+        var lineX = _fourier.m_aX[0]/2 + marginW;
+        console.log("計算を開始:" + lineX);
+        translate(lineX, _offsetY_circleX);
+        LineXSeries = nextCircleX(_fourier, 1, k_MAX, t, lineX);
     pop();
     push();
-        translate(_offsetY, _fourier.m_aY[0]/2);
-        nextCircleY(_fourier, 1, k_MAX, t);
+        translate(_offsetX_circleY, _fourier.m_aY[0]/2);
+        lineYSeries = nextCircleY(_fourier, 1, k_MAX, t);
     pop();
+
+    stroke(255, 0, 0);
+    line(LineXSeries, 0, LineXSeries, W);
+    // stroke(255);
+    // line(LineYSeries,LineXSeries, W);
 }
 
-function nextCircleX( _fourier, _k , _k_MAX, _t){
-    var r_aX = _fourier.m_aX[_k];
-    var r_bX = _fourier.m_bX[_k];
+function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
+    // there are no indices if _k > _k_MAX
+    var r_aX = 0;
+    var r_bX = 0;
+    if( _k <= _k_MAX ){
+        var r_aX = _fourier.m_aX[_k];
+        var r_bX = _fourier.m_bX[_k];
+    }
 
     strokeWeight(1);
     stroke(0);
@@ -137,21 +132,32 @@ function nextCircleX( _fourier, _k , _k_MAX, _t){
         line(0, 0, r_bX * sin(_k*_t), r_bX * cos(_k*_t));        // 前の円の中心〜この円の中心: b(k) * sin(kt)
         push();
             translate( r_bX * sin(_k*_t), r_bX * cos(_k*_t) );   // この円の中心に移動: b(k) * sin(kt)
+
+            var retLineX_tmp = _lineX + r_aX * cos(_k*_t) + r_bX * sin(_k*_t);
+            var retLineX;
             if( _k <= _k_MAX ){
-                nextCircleX( _fourier, _k+1, _k_MAX, _t );
+                retLineX = nextCircleX( _fourier, _k+1, _k_MAX, _t, retLineX_tmp);
             }else{
-                line( 0, -W, 0, W );
+                // line( 0, -W, 0, W );
                 strokeWeight(7);
                 stroke(255, 0, 0);
                 point(0, 0);
+                retLineX = retLineX_tmp;
             }
         pop();
     pop();
+
+    return retLineX;
 }
 
-function nextCircleY(_fourier, _k, _k_MAX, _t){
-    var r_aY = _fourier.m_aY[_k];
-    var r_bY = _fourier.m_bY[_k];
+function nextCircleY(_fourier, _k, _k_MAX, _t, _lineY){
+    // there are no indices if _k > _k_MAX
+    var r_aY = 0;
+    var r_bY = 0;
+    if( _k <= _k_MAX ){
+        var r_aY = _fourier.m_aY[_k];
+        var r_bY = _fourier.m_bY[_k];
+    }
 
     strokeWeight(1);
     stroke(0);
@@ -164,16 +170,22 @@ function nextCircleY(_fourier, _k, _k_MAX, _t){
         line(0, 0, r_bY * cos(_k*_t), r_bY * sin(_k*_t));        // 前の円の中心〜この円の中心を結ぶ線: b(k) * sin(kt)
         push();
             translate( r_bY * cos(_k*_t), r_bY * sin(_k*_t) );   // この円の中心に移動: b(k) * sin(kt)
+
+            var retLineY_tmp = _lineY + r_aY * cos(_k*_t) + r_bY * sin(_k*_t);
+            var retLineY;
             if( _k <= _k_MAX ){
-                this.nextCircleY( _fourier, _k+1, _k_MAX, _t );
+                nextCircleY( _fourier, _k+1, _k_MAX, _t, retLineY_tmp );
             }else{
                 line(-W, 0, W, 0);
                 strokeWeight(7);
                 stroke(0, 0, 255);
                 point(0, 0);
+                retLineY = retLineY_tmp;
             }
         pop();
     pop();
+
+    return retLineY;
 }
 
 function mousePressed(){
