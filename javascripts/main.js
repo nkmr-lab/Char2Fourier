@@ -76,12 +76,15 @@ function draw(){
     pop();
 
     if( p_listSpline.length > 0 ){
+        console.log("fourier1");
         drawFourierViewer(p_listSpline, fourier1, W*3/4, W*3/4, false);
     }
     if( p_listSpline2.length > 0 ){
+        console.log("fourier2");
         drawFourierViewer(p_listSpline2, fourier2, W*3/4, W*7/4, false);
     }
     if( p_listSpline3.length > 0 ){
+        console.log("fourier3");
         drawFourierViewer(p_listSpline3, fourier3, W*3/4, W*11/4, true);
     }
 }
@@ -97,19 +100,24 @@ function drawFourierViewer(_list, _fourier, _offsetY_circleX, _offsetX_circleY, 
         if( isWeighted ) marginW = W * 3/2;
 
         var lineX = _fourier.m_aX[0]/2 + marginW;
-        console.log("計算を開始:" + lineX);
         translate(lineX, _offsetY_circleX);
-        LineXSeries = nextCircleX(_fourier, 1, k_MAX, t, lineX);
+        lineXSeries = nextCircleX(_fourier, 1, k_MAX, t, lineX);
     pop();
     push();
-        translate(_offsetX_circleY, _fourier.m_aY[0]/2);
-        lineYSeries = nextCircleY(_fourier, 1, k_MAX, t);
+        var lineY = _fourier.m_aY[0]/2;
+        translate(_offsetX_circleY, lineY);
+        lineYSeries = nextCircleY(_fourier, 1, k_MAX, t, lineY);
     pop();
 
+    var off = Math.floor(_offsetX_circleY / W);
+    console.log("_offsetX_circleY = " + _offsetX_circleY);
+    console.log("off = " + off);
+
     stroke(255, 0, 0);
-    line(LineXSeries, 0, LineXSeries, W);
-    // stroke(255);
-    // line(LineYSeries,LineXSeries, W);
+    line(lineXSeries, 0, lineXSeries, W);
+    stroke(0, 0, 255);
+    line(off * W, lineYSeries, (off + 1) * W, lineYSeries);
+    // console.log(lineYSeries);
 }
 
 function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
@@ -173,10 +181,12 @@ function nextCircleY(_fourier, _k, _k_MAX, _t, _lineY){
 
             var retLineY_tmp = _lineY + r_aY * cos(_k*_t) + r_bY * sin(_k*_t);
             var retLineY;
+            // console.log("_k = " + _k + ", _k_MAX = " + _k_MAX);
+            // console.log("retLineY_tmp = " + retLineY_tmp);
             if( _k <= _k_MAX ){
-                nextCircleY( _fourier, _k+1, _k_MAX, _t, retLineY_tmp );
+                retLineY = nextCircleY( _fourier, _k+1, _k_MAX, _t, retLineY_tmp );
             }else{
-                line(-W, 0, W, 0);
+                // line(-W, 0, W, 0);
                 strokeWeight(7);
                 stroke(0, 0, 255);
                 point(0, 0);
@@ -190,11 +200,11 @@ function nextCircleY(_fourier, _k, _k_MAX, _t, _lineY){
 
 function mousePressed(){
     if((mouseX >= 0 && mouseX < W/2 && mouseY >= 0 && mouseY < W/2) ){
-        console.log("キャンバス1: 入力開始");
+        // console.log("キャンバス1: 入力開始");
         isWritingOn = 1;
         p_list = [];
     }else if((mouseX >= W && mouseX < W*3/2 && mouseY >= 0 && mouseY < W/2)){
-        console.log("キャンバス2: 入力開始");
+        // console.log("キャンバス2: 入力開始");
         isWritingOn = 2;
         p_list2 = [];
     }
@@ -233,14 +243,14 @@ function mouseReleased(){
 
     if(p_listSpline.length > 0 && p_listSpline2.length > 0){
         var ratio = 0.5;
-        console.log("length of p_listSpline: " + p_listSpline.length);
-        console.log("length of p_listSpline2: " + p_listSpline2.length);
+        // console.log("length of p_listSpline: " + p_listSpline.length);
+        // console.log("length of p_listSpline2: " + p_listSpline2.length);
         // console.log(1-ratio);
         // console.log(p_listSpline.length * (1-ratio));
 
         var lengthOfPointsW = parseInt(p_listSpline.length * (1-ratio) + p_listSpline2.length * ratio);
         fourier3 = new Fourier(lengthOfPointsW);
-        console.log("fourier3.lengthOfPoints = " + fourier3.lengthOfPoints);
+        // console.log("fourier3.lengthOfPoints = " + fourier3.lengthOfPoints);
 
         for(let k = 0; k < fourier1.m_aX.length; k ++){
             let w_aX = fourier1.m_aX[k] * (1-ratio) + fourier2.m_aX[k] * ratio;
