@@ -27,17 +27,15 @@ function setup(){
 function draw(){
     background(255);
 
-    // if( p_listSpline.length == 0){
-    //     fill(153);
-    //     noStroke();
-    //     text("Draw here!!", W/4, W/4);
-    // }
-
     noStroke();
     fill(228);
     rect(W, 0, W, W);
     fill(204);
     rect(W*2, 0, W, W);
+
+    drawPanel("手書きストローク1", p_listSpline, 0, true);
+    drawPanel("手書きストローク2", p_listSpline2, W, true);
+    drawPanel("平均ストローク", p_listSpline3, W*2, false);
     
     // draw strokes
     stroke(0);
@@ -78,6 +76,25 @@ function draw(){
     if( p_listSpline3.length > 0 ){
         showViewer(p_listSpline3, fourier3, W*3/4, W*11/4, true);
     }
+}
+
+function drawPanel(_textStroke, _list, _marginX, _isShowingGuide){
+    push();
+    fill(153);
+    textSize(15);
+    textAlign(LEFT, TOP);
+    text(_textStroke, _marginX, 0);
+    pop();
+    if( _list.length == 0 && _isShowingGuide){
+        fill(153);
+        noStroke();
+        textSize(30);
+        text("Draw here!", W/4 + _marginX, W/4);
+    }
+    fill(255, 153, 255);
+    rect(_marginX, W/2, W/2, W/2);
+    fill(153, 255, 255);
+    rect(_marginX + W/2, 0, W/2, W/2);
 }
 
 function showViewer(_list, _fourier, _offsetY_circleX, _offsetX_circleY, isWeighted){
