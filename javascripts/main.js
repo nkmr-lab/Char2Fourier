@@ -1,10 +1,10 @@
-var W = 400;
-var k_MAX = 50;
+var isShowingCoef = false;
+let W = 400;
 
+let k_MAX = 10;
 var spline;
 var fourier1, fourier2, fourier3;
-
-// p_listSplineX is a list of points
+// p_listSpline{1,2,3} is a list of points
 // made using Spline interpolation OR MADE FROM FOURIER SERIES
 p_list  = [], p_listSpline  = [];
 p_list2 = [], p_listSpline2 = [];
@@ -109,6 +109,8 @@ function showViewer(_list, _fourier, _offsetY_circleX, _offsetX_circleY, isWeigh
 }
 
 function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
+    let threshold = 10;
+
     // there are no indices if _k > _k_MAX
     var r_aX = 0;
     var r_bX = 0;
@@ -118,17 +120,25 @@ function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
     }
 
     strokeWeight(1);
-    stroke(0);
+    stroke(128);
     ellipse( 0, 0, Math.abs(r_aX) * 2, Math.abs(r_aX) * 2 );
     stroke(255, 128, 128);
     line(0, 0, r_aX * cos(_k*_t), r_aX * sin(_k*_t));            // 前の円の中心〜この円の中心を結ぶ線: a(k) * cos(kt)
     push();
+        var coefficientXCos = Math.round(r_aX * 100) / 100;
+        if(dist(0, 0, r_aX * cos(_k*_t), r_aX * sin(_k*_t)) >= threshold){
+            textCoef(coefficientXCos, 0, 0);
+        }
         translate( r_aX * cos(_k*_t), r_aX * sin(_k*_t) );       // この円の中心に移動: a(k) * cos(kt)
+        stroke(128);
         ellipse( 0, 0, Math.abs(r_bX) * 2, Math.abs(r_bX) * 2 );
         line(0, 0, r_bX * sin(_k*_t), r_bX * cos(_k*_t));        // 前の円の中心〜この円の中心: b(k) * sin(kt)
         push();
+            var coefficientXSin = Math.round(r_bX * 100) / 100;
+            if(dist(0, 0, r_bX * sin(_k*_t), r_bX * cos(_k*_t)) >= threshold){
+                textCoef(coefficientXSin, 0, 0);
+            }
             translate( r_bX * sin(_k*_t), r_bX * cos(_k*_t) );   // この円の中心に移動: b(k) * sin(kt)
-
             var retLineX_tmp = _lineX + r_aX * cos(_k*_t) + r_bX * sin(_k*_t);
             var retLineX;
             if( _k <= _k_MAX ){
@@ -147,6 +157,8 @@ function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
 }
 
 function nextCircleY(_fourier, _k, _k_MAX, _t, _lineY){
+    let threshold = 10;
+
     // there are no indices if _k > _k_MAX
     var r_aY = 0;
     var r_bY = 0;
@@ -161,12 +173,19 @@ function nextCircleY(_fourier, _k, _k_MAX, _t, _lineY){
     stroke(128, 128, 255);
     line(0, 0, r_aY * sin(_k*_t), r_aY * cos(_k*_t));           // 前の円の中心〜この円の中心を結ぶ線: a(k) * cos(kt)
     push();
+        var coefficientYCos = Math.round(r_aY * 100) / 100;
+        if(dist(0, 0, r_aY * sin(_k*_t), r_aY * cos(_k*_t)) >= threshold){
+            textCoef(coefficientYCos, 0, 0);
+        }
         translate( r_aY * sin(_k*_t), r_aY * cos(_k*_t) );       // この円の中心に移動: a(k) * cos(kt)
         ellipse( 0, 0, Math.abs(r_bY) * 2, Math.abs(r_bY) * 2 );
         line(0, 0, r_bY * cos(_k*_t), r_bY * sin(_k*_t));        // 前の円の中心〜この円の中心を結ぶ線: b(k) * sin(kt)
         push();
+            var coefficientYSin = Math.round(r_bY * 100) / 100;
+            if(dist(0, 0, r_bY * cos(_k*_t), r_bY * sin(_k*_t)) >= threshold){
+                textCoef(coefficientYSin, 0, 0);
+            }
             translate( r_bY * cos(_k*_t), r_bY * sin(_k*_t) );   // この円の中心に移動: b(k) * sin(kt)
-
             var retLineY_tmp = _lineY + r_aY * cos(_k*_t) + r_bY * sin(_k*_t);
             var retLineY;
             if( _k <= _k_MAX ){
@@ -264,6 +283,15 @@ function mouseReleased(){
     // $("#formulaY1").text(formula_y);
 
     // p_listSpline = fourier.restorePoints(this);
+}
+
+function textCoef(_text, _x, _y){
+    push();
+    noStroke();
+    fill(0);
+    textSize(10);
+    text(_text, _x, _y);
+    pop();
 }
 
 /**
