@@ -1,4 +1,4 @@
-var isShowingCoef = false;
+var isShowingCoef = true;
 let W = 400;
 
 let k_MAX = 20;
