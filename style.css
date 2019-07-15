@@ -32,3 +32,16 @@ body{
     top: 670px;
     left: 0;
 }
+
+button{
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-left: 10px;
+    padding: 10px 20px;
+
+    background-color: #e8822a;
+    color: #fff;
+    width: 150px;
+    border-style: none;
+}
