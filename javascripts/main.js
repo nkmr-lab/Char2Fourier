@@ -134,7 +134,7 @@ function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
         var r_bX = _fourier.m_bX[_k];
     }
 
-    var hue = _k * 360 * 2 / _k_MAX;
+    var hue = (_k * 360 * 2 / _k_MAX) % 360;
 
     strokeWeight(1);
     stroke(hue, 100, 100);
@@ -185,7 +185,7 @@ function nextCircleY(_fourier, _k, _k_MAX, _t, _lineY){
         var r_bY = _fourier.m_bY[_k];
     }
 
-    var hue = _k * 360 * 2 / _k_MAX;
+    var hue = (_k * 360 * 2 / _k_MAX) % 360;
 
     strokeWeight(1);
     stroke(hue, 100, 100);
@@ -253,6 +253,7 @@ function mouseReleased(){
         p_list = [];
 
         fourier1.expandFourierSeries( p_listSpline, k_MAX );
+        updateFormula(fourier1, "#formulaX1", "#formulaY1");
 
     }else if((mouseX >= W && mouseX < W*3/2 && mouseY >= 0 && mouseY < W/2)){
 
@@ -261,6 +262,7 @@ function mouseReleased(){
         p_list2 = [];
 
         fourier2.expandFourierSeries( p_listSpline2, k_MAX );
+        updateFormula(fourier2, "#formulaX2", "#formulaY2");
     }
 
     if(p_listSpline.length > 0 && p_listSpline2.length > 0){
@@ -281,30 +283,9 @@ function mouseReleased(){
         }
 
         p_listSpline3 = fourier3.restorePoints();
+        updateFormula(fourier3, "#formulaX3", "#formulaY3");
     }
 
-    // var formula_x = "";
-    // var formula_y = "";
-    // for ( var i = 0 ; i < 10 ; i++ ){
-    //     k_cos_x = fourier.m_aX[i];
-    //     k_sin_x = fourier.m_bX[i];
-    //     k_cos_y = fourier.m_aY[i];
-    //     k_sin_y = fourier.m_bY[i];
-
-    //     //console.log( i + ":" +this.m_aX[i] + ", " + this.m_bX[i] + ", " + this.m_aY[i] + ", " + this.m_bX[i] );
-    //     formula_x += getFormula(Math.round(k_cos_x*100)/100) +"*cos"+i+"t";
-    //     formula_x += getFormula(Math.round(k_sin_x*100)/100) +"*sin"+i+"t";
-    //     formula_y += getFormula(Math.round(k_cos_y*100)/100) +"*cos"+i+"t";
-    //     formula_y += getFormula(Math.round(k_sin_y*100)/100) +"*sin"+i+"t";
-    // }
-
-    // formula_x = formula_x.slice(2);
-    // formula_y = formula_y.slice(2);
-
-    // $("#formulaX1").text(formula_x);
-    // $("#formulaY1").text(formula_y);
-
-    // p_listSpline = fourier.restorePoints(this);
 }
 
 function textCoef(_text, _x, _y){
@@ -317,17 +298,43 @@ function textCoef(_text, _x, _y){
     pop();
 }
 
+function updateFormula(_fourier, _elemFormulaX, _elemFormulaY){
+    var formula_x = "";
+    var formula_y = "";
+
+    for (var i = 0; i < k_MAX; i ++){
+        k_cos_x = _fourier.m_aX[i];
+        k_sin_x = _fourier.m_bX[i];
+        k_cos_y = _fourier.m_aY[i];
+        k_sin_y = _fourier.m_bY[i];
+
+        //console.log( i + ":" +this.m_aX[i] + ", " + this.m_bX[i] + ", " + this.m_aY[i] + ", " + this.m_bX[i] );
+        formula_x += k_cos_x == 0 ? "" : getFormula(Math.round(k_cos_x*100)/100) +"cos"+i+"t";
+        formula_x += k_sin_x == 0 ? "" : getFormula(Math.round(k_sin_x*100)/100) +"sin"+i+"t";
+        formula_y += k_cos_y == 0 ? "" : getFormula(Math.round(k_cos_y*100)/100) +"cos"+i+"t";
+        formula_y += k_sin_y == 0 ? "" : getFormula(Math.round(k_sin_y*100)/100) +"sin"+i+"t";
+    }
+
+    formula_x = formula_x.slice(2);
+    formula_y = formula_y.slice(2);
+
+    $(_elemFormulaX).text(formula_x);
+    $(_elemFormulaY).text(formula_y);
+
+    // p_listSpline = fourier.restorePoints(this);
+}
+
 /**
  * get coefficiet as String
  * @param  _coefficient 
  * @return {String}
  */
-// getFormula = function( _coefficient ){
-//     if( _coefficient >= 0 ){
-//         return " + " + _coefficient;
-//     }
-//     return " - " + Math.abs(_coefficient);
-// }
+function getFormula( _coefficient ){
+    if( _coefficient >= 0 ){
+        return " + " + _coefficient;
+    }
+    return " - " + Math.abs(_coefficient);
+}
 
 function Point( x, y ){
     this.x = x;

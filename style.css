@@ -21,16 +21,18 @@ body{
     float: left;
 }
 
-.slider{
-    width: 150px;
-    float: right;
+.formula-container{
+    display: inline;
 }
 
 .formula{
-    margin: 10px 10px 10px 10px;
+    width: 400px;
+    height: 100px;
+    font-size: 10px;
+/*    margin: 10px 10px 10px 10px;
     position: absolute;
     top: 670px;
-    left: 0;
+    left: 0;*/
 }
 
 button{
