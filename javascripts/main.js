@@ -11,7 +11,8 @@ p_list2 = [], p_listSpline2 = [];
 p_listSpline3 = [];
 
 function setup(){
-    createCanvas(W*3, W);
+    let canvas = createCanvas(W*3, W);
+    canvas.parent("canvasInput");
     noFill();
     textSize(20);
     textAlign(CENTER, CENTER);
@@ -317,6 +318,9 @@ function updateFormula(_fourier, _elemFormulaX, _elemFormulaY){
 
     formula_x = formula_x.slice(2);
     formula_y = formula_y.slice(2);
+
+    formula_x = "x(t) = " + formula_x;
+    formula_y = "y(t) = " + formula_y;
 
     $(_elemFormulaX).text(formula_x);
     $(_elemFormulaY).text(formula_y);
