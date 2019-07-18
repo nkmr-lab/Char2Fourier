@@ -26,10 +26,10 @@ function draw(){
     background(255);
 
     noStroke();
-    fill(228);
-    rect(W, 0, W, W);
-    fill(204);
-    rect(W*2, 0, W, W);
+    fill(205, 222, 255);
+    rect(W/2, W/2, W/2, W/2);
+    rect(W*3/2, W/2, W/2, W/2);
+    rect(W*5/2, W/2, W/2, W/2);
 
     drawPanel("手書きストローク1", p_listSpline, 0, true);
     drawPanel("手書きストローク2", p_listSpline2, W, true);
@@ -87,9 +87,9 @@ function drawPanel(_textStroke, _list, _marginX, _isShowingGuide){
         textAlign(CENTER, CENTER);
         text("Draw here!", W/4 + _marginX, W/4);
     }
-    fill(255, 153, 255);
+    fill(255, 204, 255);
     rect(_marginX, W/2, W/2, W/2);
-    fill(153, 255, 255);
+    fill(204, 255, 255);
     rect(_marginX + W/2, 0, W/2, W/2);
 }
 
@@ -304,6 +304,7 @@ function textCoef(_text, _x, _y){
     noStroke();
     fill(0);
     textSize(10);
+    textAlign(CENTER, CENTER);
     text(_text, _x, _y);
     pop();
 }
