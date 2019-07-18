@@ -1,6 +1,4 @@
 $(function(){
-    // document.addEventListener('touchmove', function(e) {e.preventDefault();}, {passive: false});
-
     $("#coefficientToggle").on("click", function(){
         if(isShowingCoef){
             $(this).text("係数OFF");

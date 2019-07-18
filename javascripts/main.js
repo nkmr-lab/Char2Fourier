@@ -4,6 +4,7 @@ let W = 400;
 let k_MAX = 20;
 var spline;
 var fourier1, fourier2, fourier3;
+
 // p_listSpline{1,2,3} is a list of points
 // made using Spline interpolation OR MADE FROM FOURIER SERIES
 p_list  = [], p_listSpline  = [];
@@ -324,8 +325,6 @@ function updateFormula(_fourier, _elemFormulaX, _elemFormulaY){
 
     $(_elemFormulaX).text(formula_x);
     $(_elemFormulaY).text(formula_y);
-
-    // p_listSpline = fourier.restorePoints(this);
 }
 
 /**
