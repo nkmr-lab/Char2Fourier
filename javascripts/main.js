@@ -20,8 +20,6 @@ function setup(){
     fourier1 = new Fourier(0);
     fourier2 = new Fourier(0);
     fourier3 = new Fourier(0);
-
-    pg = createGraphics(W, W);
 }
 
 function draw(){
@@ -79,16 +77,14 @@ function draw(){
 }
 
 function drawPanel(_textStroke, _list, _marginX, _isShowingGuide){
-    push();
     fill(153);
     textSize(15);
     textAlign(LEFT, TOP);
     text(_textStroke, _marginX, 0);
-    pop();
     if( _list.length == 0 && _isShowingGuide){
-        fill(153);
         noStroke();
         textSize(30);
+        textAlign(CENTER, CENTER);
         text("Draw here!", W/4 + _marginX, W/4);
     }
     fill(255, 153, 255);
@@ -323,7 +319,6 @@ function textCoef(_text, _x, _y){
 //     }
 //     return " - " + Math.abs(_coefficient);
 // }
-
 
 function Point( x, y ){
     this.x = x;

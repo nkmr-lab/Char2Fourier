@@ -1,4 +1,9 @@
 $(function(){
+    $(".p5Canvas").on("touchmove.noScroll", function(e) {
+        e.preventDefault();
+    });
+
+
     $("#coefficientToggle").on("click", function(){
         if(isShowingCoef){
             $(this).text("係数OFF");
