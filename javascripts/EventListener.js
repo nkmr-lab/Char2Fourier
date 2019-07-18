@@ -1,6 +1,9 @@
 $(function(){
-    $(window).on("touchmove.noScroll", function(e) {
+    document.addEventListener('touchmove', function(e){
         e.preventDefault();
+    }, 
+    {
+        passive: false
     });
 
     $("#coefficientToggle").on("click", function(){
