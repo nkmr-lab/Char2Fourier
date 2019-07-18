@@ -23,6 +23,7 @@ function setup(){
 }
 
 function draw(){
+    colorMode(RGB, 255);
     background(255);
 
     noStroke();
@@ -122,6 +123,7 @@ function showViewer(_list, _fourier, _offsetY_circleX, _offsetX_circleY, isWeigh
 }
 
 function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
+    colorMode(HSB, 360, 100, 100);
     let threshold = 10;
 
     // there are no indices if _k > _k_MAX
@@ -132,10 +134,11 @@ function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
         var r_bX = _fourier.m_bX[_k];
     }
 
+    var hue = _k * 360 * 2 / _k_MAX;
+
     strokeWeight(1);
-    stroke(128);
+    stroke(hue, 100, 100);
     ellipse( 0, 0, Math.abs(r_aX) * 2, Math.abs(r_aX) * 2 );
-    stroke(255, 128, 128);
     line(0, 0, r_aX * cos(_k*_t), r_aX * sin(_k*_t));            // 前の円の中心〜この円の中心を結ぶ線: a(k) * cos(kt)
     push();
         var coefficientXCos = Math.round(r_aX * 100) / 100;
@@ -143,8 +146,9 @@ function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
             textCoef(coefficientXCos, 0, 0);
         }
         translate( r_aX * cos(_k*_t), r_aX * sin(_k*_t) );       // この円の中心に移動: a(k) * cos(kt)
-        stroke(128);
+        stroke(hue, 100, 100);
         ellipse( 0, 0, Math.abs(r_bX) * 2, Math.abs(r_bX) * 2 );
+        // stroke(160, 2, 40);
         line(0, 0, r_bX * sin(_k*_t), r_bX * cos(_k*_t));        // 前の円の中心〜この円の中心: b(k) * sin(kt)
         push();
             var coefficientXSin = Math.round(r_bX * 100) / 100;
@@ -157,7 +161,7 @@ function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
             if( _k <= _k_MAX ){
                 retLineX = nextCircleX( _fourier, _k+1, _k_MAX, _t, retLineX_tmp);
             }else{
-                // line( 0, -W, 0, W );
+                colorMode(RGB, 255, 255, 255);
                 strokeWeight(7);
                 stroke(255, 0, 0);
                 point(0, 0);
@@ -170,6 +174,7 @@ function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
 }
 
 function nextCircleY(_fourier, _k, _k_MAX, _t, _lineY){
+    colorMode(HSB, 360, 100, 100);
     let threshold = 10;
 
     // there are no indices if _k > _k_MAX
@@ -180,10 +185,12 @@ function nextCircleY(_fourier, _k, _k_MAX, _t, _lineY){
         var r_bY = _fourier.m_bY[_k];
     }
 
+    var hue = _k * 360 * 2 / _k_MAX;
+
     strokeWeight(1);
-    stroke(128);
+    stroke(hue, 100, 100);
     ellipse( 0, 0, Math.abs(r_aY) * 2, Math.abs(r_aY) * 2 );
-    stroke(128, 128, 255);
+    // stroke(128, 128, 255);
     line(0, 0, r_aY * sin(_k*_t), r_aY * cos(_k*_t));           // 前の円の中心〜この円の中心を結ぶ線: a(k) * cos(kt)
     push();
         var coefficientYCos = Math.round(r_aY * 100) / 100;
@@ -191,7 +198,7 @@ function nextCircleY(_fourier, _k, _k_MAX, _t, _lineY){
             textCoef(coefficientYCos, 0, 0);
         }
         translate( r_aY * sin(_k*_t), r_aY * cos(_k*_t) );       // この円の中心に移動: a(k) * cos(kt)
-        stroke(128);
+        stroke(hue, 100, 100);
         ellipse( 0, 0, Math.abs(r_bY) * 2, Math.abs(r_bY) * 2 );
         line(0, 0, r_bY * cos(_k*_t), r_bY * sin(_k*_t));        // 前の円の中心〜この円の中心を結ぶ線: b(k) * sin(kt)
         push();
@@ -205,6 +212,7 @@ function nextCircleY(_fourier, _k, _k_MAX, _t, _lineY){
             if( _k <= _k_MAX ){
                 retLineY = nextCircleY( _fourier, _k+1, _k_MAX, _t, retLineY_tmp );
             }else{
+                colorMode(RGB, 255, 255, 255);
                 strokeWeight(7);
                 stroke(0, 0, 255);
                 point(0, 0);
