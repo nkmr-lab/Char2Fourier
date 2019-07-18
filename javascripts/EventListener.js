@@ -1,5 +1,5 @@
 $(function(){
-    $(".p5Canvas").on("touchmove.noScroll", function(e) {
+    $(window).on("touchmove.noScroll", function(e) {
         e.preventDefault();
     });
 
