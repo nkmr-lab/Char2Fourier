@@ -15,20 +15,51 @@ body{
     font-size: 22px;
 }
 
+#content{
+    display: block;
+}
+
 #defaultCanvas0{
     margin-top: 10px;
     margin-left: 10px;
     float: left;
 }
 
-.slider{
-    width: 150px;
-    float: right;
+table{
+    border: none;
+    position:  absolute;
+    padding: 10px;
+    left: 0px;
+    top: 530px; 
 }
 
-.formula{
-    margin: 10px 10px 10px 10px;
-    position: absolute;
-    top: 670px;
-    left: 0;
+.formula-container{
+    display: inline;
+}
+
+.formula-x, .formula-y{
+    width: 400px;
+    height: 100px;
+    font-size: 10px;
+}
+
+.formula-x{
+    background-color: #ffccff;
+}
+
+.formula-y{
+    background-color: #ccffff;
+}
+
+button{
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-left: 10px;
+    padding: 10px 20px;
+
+    background-color: #e8822a;
+    color: #fff;
+    width: 150px;
+    border-style: none;
 }
