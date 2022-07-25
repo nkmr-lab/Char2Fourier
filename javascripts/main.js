@@ -1,17 +1,18 @@
-var W = 400;
-var k_MAX = 50;
+var isShowingCoef = true;
+let W = 400;
 
+let k_MAX = 20;
 var spline;
 var fourier1, fourier2, fourier3;
-
-// p_listSplineX is a list of points
+// p_listSpline{1,2,3} is a list of points
 // made using Spline interpolation OR MADE FROM FOURIER SERIES
 p_list  = [], p_listSpline  = [];
 p_list2 = [], p_listSpline2 = [];
 p_listSpline3 = [];
 
 function setup(){
-    createCanvas(W*3, W);
+    let canvas = createCanvas(W*3, W);
+    canvas.parent("canvasInput");
     noFill();
     textSize(20);
     textAlign(CENTER, CENTER);
@@ -20,24 +21,21 @@ function setup(){
     fourier1 = new Fourier(0);
     fourier2 = new Fourier(0);
     fourier3 = new Fourier(0);
-
-    pg = createGraphics(W, W);
 }
 
 function draw(){
+    colorMode(RGB, 255);
     background(255);
 
-    // if( p_listSpline.length == 0){
-    //     fill(153);
-    //     noStroke();
-    //     text("Draw here!!", W/4, W/4);
-    // }
-
     noStroke();
-    fill(228);
-    rect(W, 0, W, W);
-    fill(204);
-    rect(W*2, 0, W, W);
+    fill(205, 222, 255);
+    rect(W/2, W/2, W/2, W/2);
+    rect(W*3/2, W/2, W/2, W/2);
+    rect(W*5/2, W/2, W/2, W/2);
+
+    drawPanel("手書きストローク1", p_listSpline, 0, true);
+    drawPanel("手書きストローク2", p_listSpline2, W, true);
+    drawPanel("平均ストローク", p_listSpline3, W*2, false);
     
     // draw strokes
     stroke(0);
@@ -80,6 +78,23 @@ function draw(){
     }
 }
 
+function drawPanel(_textStroke, _list, _marginX, _isShowingGuide){
+    fill(153);
+    textSize(15);
+    textAlign(LEFT, TOP);
+    text(_textStroke, _marginX, 0);
+    if( _list.length == 0 && _isShowingGuide){
+        noStroke();
+        textSize(30);
+        textAlign(CENTER, CENTER);
+        text("Draw here!", W/4 + _marginX, W/4);
+    }
+    fill(255, 204, 255);
+    rect(_marginX, W/2, W/2, W/2);
+    fill(204, 255, 255);
+    rect(_marginX + W/2, 0, W/2, W/2);
+}
+
 function showViewer(_list, _fourier, _offsetY_circleX, _offsetX_circleY, isWeighted){
     stroke(0);
     strokeWeight(1);
@@ -89,7 +104,6 @@ function showViewer(_list, _fourier, _offsetY_circleX, _offsetX_circleY, isWeigh
     push();
         var marginW = 0;
         if( isWeighted ) marginW = W * 3/2;
-
         var lineX = _fourier.m_aX[0]/2 + marginW;
         translate(lineX, _offsetY_circleX);
         lineXSeries = nextCircleX(_fourier, 1, k_MAX, t, lineX);
@@ -109,6 +123,9 @@ function showViewer(_list, _fourier, _offsetY_circleX, _offsetX_circleY, isWeigh
 }
 
 function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
+    colorMode(HSB, 360, 100, 100);
+    let threshold = 10;
+
     // there are no indices if _k > _k_MAX
     var r_aX = 0;
     var r_bX = 0;
@@ -117,24 +134,34 @@ function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
         var r_bX = _fourier.m_bX[_k];
     }
 
+    var hue = (_k * 360 * 2 / _k_MAX) % 360;
+
     strokeWeight(1);
-    stroke(0);
+    stroke(hue, 100, 100);
     ellipse( 0, 0, Math.abs(r_aX) * 2, Math.abs(r_aX) * 2 );
-    stroke(255, 128, 128);
     line(0, 0, r_aX * cos(_k*_t), r_aX * sin(_k*_t));            // 前の円の中心〜この円の中心を結ぶ線: a(k) * cos(kt)
     push();
+        var coefficientXCos = Math.round(r_aX * 100) / 100;
+        if(dist(0, 0, r_aX * cos(_k*_t), r_aX * sin(_k*_t)) >= threshold && isShowingCoef){
+            textCoef(coefficientXCos, 0, 0);
+        }
         translate( r_aX * cos(_k*_t), r_aX * sin(_k*_t) );       // この円の中心に移動: a(k) * cos(kt)
+        stroke(hue, 100, 100);
         ellipse( 0, 0, Math.abs(r_bX) * 2, Math.abs(r_bX) * 2 );
+        // stroke(160, 2, 40);
         line(0, 0, r_bX * sin(_k*_t), r_bX * cos(_k*_t));        // 前の円の中心〜この円の中心: b(k) * sin(kt)
         push();
+            var coefficientXSin = Math.round(r_bX * 100) / 100;
+            if(dist(0, 0, r_bX * sin(_k*_t), r_bX * cos(_k*_t)) >= threshold && isShowingCoef){
+                textCoef(coefficientXSin, 0, 0);
+            }
             translate( r_bX * sin(_k*_t), r_bX * cos(_k*_t) );   // この円の中心に移動: b(k) * sin(kt)
-
             var retLineX_tmp = _lineX + r_aX * cos(_k*_t) + r_bX * sin(_k*_t);
             var retLineX;
             if( _k <= _k_MAX ){
                 retLineX = nextCircleX( _fourier, _k+1, _k_MAX, _t, retLineX_tmp);
             }else{
-                // line( 0, -W, 0, W );
+                colorMode(RGB, 255, 255, 255);
                 strokeWeight(7);
                 stroke(255, 0, 0);
                 point(0, 0);
@@ -147,6 +174,9 @@ function nextCircleX( _fourier, _k , _k_MAX, _t, _lineX){
 }
 
 function nextCircleY(_fourier, _k, _k_MAX, _t, _lineY){
+    colorMode(HSB, 360, 100, 100);
+    let threshold = 10;
+
     // there are no indices if _k > _k_MAX
     var r_aY = 0;
     var r_bY = 0;
@@ -155,23 +185,34 @@ function nextCircleY(_fourier, _k, _k_MAX, _t, _lineY){
         var r_bY = _fourier.m_bY[_k];
     }
 
+    var hue = (_k * 360 * 2 / _k_MAX) % 360;
+
     strokeWeight(1);
-    stroke(0);
+    stroke(hue, 100, 100);
     ellipse( 0, 0, Math.abs(r_aY) * 2, Math.abs(r_aY) * 2 );
-    stroke(128, 128, 255);
+    // stroke(128, 128, 255);
     line(0, 0, r_aY * sin(_k*_t), r_aY * cos(_k*_t));           // 前の円の中心〜この円の中心を結ぶ線: a(k) * cos(kt)
     push();
+        var coefficientYCos = Math.round(r_aY * 100) / 100;
+        if(dist(0, 0, r_aY * sin(_k*_t), r_aY * cos(_k*_t)) >= threshold && isShowingCoef){
+            textCoef(coefficientYCos, 0, 0);
+        }
         translate( r_aY * sin(_k*_t), r_aY * cos(_k*_t) );       // この円の中心に移動: a(k) * cos(kt)
+        stroke(hue, 100, 100);
         ellipse( 0, 0, Math.abs(r_bY) * 2, Math.abs(r_bY) * 2 );
         line(0, 0, r_bY * cos(_k*_t), r_bY * sin(_k*_t));        // 前の円の中心〜この円の中心を結ぶ線: b(k) * sin(kt)
         push();
+            var coefficientYSin = Math.round(r_bY * 100) / 100;
+            if(dist(0, 0, r_bY * cos(_k*_t), r_bY * sin(_k*_t)) >= threshold && isShowingCoef){
+                textCoef(coefficientYSin, 0, 0);
+            }
             translate( r_bY * cos(_k*_t), r_bY * sin(_k*_t) );   // この円の中心に移動: b(k) * sin(kt)
-
             var retLineY_tmp = _lineY + r_aY * cos(_k*_t) + r_bY * sin(_k*_t);
             var retLineY;
             if( _k <= _k_MAX ){
                 retLineY = nextCircleY( _fourier, _k+1, _k_MAX, _t, retLineY_tmp );
             }else{
+                colorMode(RGB, 255, 255, 255);
                 strokeWeight(7);
                 stroke(0, 0, 255);
                 point(0, 0);
@@ -212,6 +253,7 @@ function mouseReleased(){
         p_list = [];
 
         fourier1.expandFourierSeries( p_listSpline, k_MAX );
+        updateFormula(fourier1, "#formulaX1", "#formulaY1");
 
     }else if((mouseX >= W && mouseX < W*3/2 && mouseY >= 0 && mouseY < W/2)){
 
@@ -220,6 +262,7 @@ function mouseReleased(){
         p_list2 = [];
 
         fourier2.expandFourierSeries( p_listSpline2, k_MAX );
+        updateFormula(fourier2, "#formulaX2", "#formulaY2");
     }
 
     if(p_listSpline.length > 0 && p_listSpline2.length > 0){
@@ -240,28 +283,54 @@ function mouseReleased(){
         }
 
         p_listSpline3 = fourier3.restorePoints();
+        updateFormula(fourier3, "#formulaX3", "#formulaY3");
     }
 
-    // var formula_x = "";
-    // var formula_y = "";
-    // for ( var i = 0 ; i < 10 ; i++ ){
-    //     k_cos_x = fourier.m_aX[i];
-    //     k_sin_x = fourier.m_bX[i];
-    //     k_cos_y = fourier.m_aY[i];
-    //     k_sin_y = fourier.m_bY[i];
+}
 
-    //     //console.log( i + ":" +this.m_aX[i] + ", " + this.m_bX[i] + ", " + this.m_aY[i] + ", " + this.m_bX[i] );
-    //     formula_x += getFormula(Math.round(k_cos_x*100)/100) +"*cos"+i+"t";
-    //     formula_x += getFormula(Math.round(k_sin_x*100)/100) +"*sin"+i+"t";
-    //     formula_y += getFormula(Math.round(k_cos_y*100)/100) +"*cos"+i+"t";
-    //     formula_y += getFormula(Math.round(k_sin_y*100)/100) +"*sin"+i+"t";
-    // }
+function textCoef(_text, _x, _y){
+    push();
+    noStroke();
+    fill(0);
+    textSize(10);
+    textAlign(CENTER, CENTER);
+    text(_text, _x, _y);
+    pop();
+}
 
-    // formula_x = formula_x.slice(2);
-    // formula_y = formula_y.slice(2);
+function getStrCosSin(cos_or_sin, num){
+    if(num == 0) return "";
+    else if(num == 1) return cos_or_sin + "(t)";
+    return cos_or_sin + "(" + num + "t)";
+}
 
-    // $("#formulaX1").text(formula_x);
-    // $("#formulaY1").text(formula_y);
+function updateFormula(_fourier, _elemFormulaX, _elemFormulaY){
+    var formula_x = "";
+    var formula_y = "";
+
+    for (var i = 0; i < k_MAX; i ++){
+        k_cos_x = _fourier.m_aX[i];
+        if( k_cos_x > 800 ) k_cos_x -= 800;
+        else if( k_cos_x > 400 ) k_cos_x = (k_cos_x * 2 - 800) / 2;
+        k_sin_x = _fourier.m_bX[i];
+        k_cos_y = _fourier.m_aY[i];
+        k_sin_y = _fourier.m_bY[i];
+
+        //console.log( i + ":" +this.m_aX[i] + ", " + this.m_bX[i] + ", " + this.m_aY[i] + ", " + this.m_bX[i] );
+        formula_x += k_cos_x == 0 ? "" : getFormula(Math.round(k_cos_x*100)/100) + getStrCosSin("cos", i);
+        formula_x += k_sin_x == 0 ? "" : getFormula(Math.round(k_sin_x*100)/100) + getStrCosSin("sin", i);
+        formula_y += k_cos_y == 0 ? "" : getFormula(Math.round(k_cos_y*100)/100) + getStrCosSin("cos", i);
+        formula_y += k_sin_y == 0 ? "" : getFormula(Math.round(k_sin_y*100)/100) + getStrCosSin("sin", i);
+    }
+
+    formula_x = formula_x.slice(2);
+    formula_y = formula_y.slice(2);
+
+    formula_x = "x(t) = " + formula_x;
+    formula_y = "y(t) = " + formula_y;
+
+    $(_elemFormulaX).text(formula_x + " + ...");
+    $(_elemFormulaY).text(formula_y + " + ...");
 
     // p_listSpline = fourier.restorePoints(this);
 }
@@ -271,13 +340,12 @@ function mouseReleased(){
  * @param  _coefficient 
  * @return {String}
  */
-// getFormula = function( _coefficient ){
-//     if( _coefficient >= 0 ){
-//         return " + " + _coefficient;
-//     }
-//     return " - " + Math.abs(_coefficient);
-// }
-
+function getFormula( _coefficient ){
+    if( _coefficient >= 0 ){
+        return " + " + _coefficient;
+    }
+    return " - " + Math.abs(_coefficient);
+}
 
 function Point( x, y ){
     this.x = x;
